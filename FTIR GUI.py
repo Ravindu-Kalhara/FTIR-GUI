@@ -15,13 +15,15 @@ label = tk.Label(window, text="Enter your filenames here (comma-separated):")
 textbox = tk.Text(window, height=1, width=30)
 
 # Create the buttons
+
+
 def run_code():
     # Get the filenames from the textbox
     filenames = textbox.get("1.0", "end").strip().split(",")
-    
+
     # Load the csv files into pandas dataframes
     dataframes = [pd.read_csv(filename.strip() + ".csv", skiprows=1) for filename in filenames]
-    
+
     # Create a plot of the "cm-1" column of the first dataframe
     fig, ax = plt.subplots()
     dataframes[0].plot('cm-1', ax=ax)
@@ -40,6 +42,7 @@ def run_code():
 
     # Display the plot
     plt.show()
+
 
 button1 = tk.Button(window, text="Run Code", command=run_code)
 button2 = tk.Button(window, text="Clear", command=lambda: textbox.delete('1.0', 'end'))
