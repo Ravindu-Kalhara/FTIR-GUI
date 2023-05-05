@@ -1,7 +1,9 @@
 import os
 import tkinter as tk
-import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.backend_bases import PickEvent
+from matplotlib.figure import Figure
+from pandas import read_csv
 from matplotlib.widgets import Cursor
 from tkinter import filedialog
 
@@ -12,6 +14,8 @@ filepaths_str = tk.StringVar()
 
 
 def open_file_dialog(filenames_txtbox: tk.Text, filepaths_str: tk.StringVar) -> None:
+    """open file picker and set the texts in text box"""
+
     filepaths = filedialog.askopenfilenames(initialdir=".", title="Select files",
                                             filetypes=[("Text files", "*.csv")], multiple=True)  # type: ignore
 
@@ -25,25 +29,47 @@ def open_file_dialog(filenames_txtbox: tk.Text, filepaths_str: tk.StringVar) -> 
     filenames_txtbox.configure(state=tk.DISABLED)
 
 
+def on_pick(event: PickEvent, graphs: dict, fig: Figure) -> None:
+    """function for show-hide feature"""
+
+    legend = event.artist
+    isVisible = legend.get_visible()
+
+    graphs[legend].set_visible(not isVisible)
+    legend.set_visible(not isVisible)
+
+    fig.canvas.draw()
+
+
 def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> None:
+    """displaying plots and other features activates after click on 'Display Graphs(s)'"""
+
     file_paths = filepaths_str.get().split(",")
-    dataframes = [pd.read_csv(filename, skiprows=1).dropna() for filename in file_paths]
+    dataframes = [read_csv(filename, skiprows=1).dropna() for filename in file_paths]
     txtbox_str = filenames_txtbox.get("1.0", "end")
     datafile_names = tuple(map(lambda x: x.split('.')[0], txtbox_str.strip().split(',')))
 
     # create a plot which displays all selected dataframes
     fig, ax = plt.subplots()
     fig.set_size_inches(w=10, h=6)
+    fig.set_tight_layout(True)
+    lines = []
     for dataframe in dataframes:
-        dataframe.plot(x="cm-1", y="%T", ax=ax)
+        lines.append(ax.plot(dataframe["cm-1"], dataframe["%T"], '-')[0])
     ax.set_xlabel("cm-1")
     ax.set_ylabel("%T")
-    ax.set_title(f"Transmition vs wave number of {', '.join(datafile_names)}")
-    ax.legend(datafile_names, loc="lower right")
     ax.grid()
-    plt.tight_layout()
+    ax.set_title(f"Transmition vs wave number of {', '.join(datafile_names)}")
+
+    # config plot for show-hide feature
+    legends = ax.legend(datafile_names, loc="lower right")
+    for legend in legends.get_lines():
+        legend.set_picker(True)
+        legend.set_pickradius(5)
+    graphs = dict(zip(legends.get_lines(), lines))
 
     cursor = Cursor(ax, color='k', linewidth=1)
+    plt.connect('pick_event', lambda event: on_pick(event, graphs, fig))  # connect mouse click event
     plt.show()
 
 
