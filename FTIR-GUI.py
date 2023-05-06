@@ -1,19 +1,23 @@
 import os
-import tkinter as tk
+import customtkinter as ctk
 import matplotlib.pyplot as plt
 from matplotlib.backend_bases import PickEvent
 from matplotlib.figure import Figure
 from pandas import read_csv
 from matplotlib.widgets import Cursor
-from tkinter import filedialog
+from customtkinter import filedialog
+
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
 
 # Create the main window
-window = tk.Tk()
+window = ctk.CTk()
+window.geometry("420x80")
 window.title("FTIR DATA PLOTER")
-filepaths_str = tk.StringVar()
+filepaths_str = ctk.StringVar()
 
 
-def open_file_dialog(filenames_txtbox: tk.Text, filepaths_str: tk.StringVar) -> None:
+def open_file_dialog(filenames_txtbox: ctk.CTkEntry, filepaths_str: ctk.StringVar) -> None:
     """open file picker and set the texts in text box"""
 
     filepaths = filedialog.askopenfilenames(
@@ -24,10 +28,10 @@ def open_file_dialog(filenames_txtbox: tk.Text, filepaths_str: tk.StringVar) -> 
     # format data file names to display in text box
     txtbox_str = ",".join(map(lambda x: x.split(os.sep)[-1], filepaths))
 
-    filenames_txtbox.configure(state=tk.NORMAL)
-    filenames_txtbox.delete("1.0", tk.END)
-    filenames_txtbox.insert(tk.END, txtbox_str)
-    filenames_txtbox.configure(state=tk.DISABLED)
+    filenames_txtbox.configure(state=ctk.NORMAL)
+    filenames_txtbox.delete(0, ctk.END)
+    filenames_txtbox.insert(ctk.END, txtbox_str)
+    filenames_txtbox.configure(state=ctk.DISABLED)
 
 
 def on_pick(event: PickEvent, graphs: dict, fig: Figure) -> None:
@@ -42,12 +46,12 @@ def on_pick(event: PickEvent, graphs: dict, fig: Figure) -> None:
     fig.canvas.draw()
 
 
-def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> None:
+def display_graphs(filepaths_str: ctk.StringVar, filenames_txtbox: ctk.CTkEntry) -> None:
     """displaying plots and other features activates after click on 'Display Graphs(s)'"""
 
     file_paths = filepaths_str.get().split(",")
     dataframes = [read_csv(filename, skiprows=1).dropna() for filename in file_paths]
-    txtbox_str = filenames_txtbox.get("1.0", "end")
+    txtbox_str = filenames_txtbox.get()
     datafile_names = tuple(map(lambda x: x.split(".")[0], txtbox_str.strip().split(",")))
 
     # create a plot which displays all selected dataframes
@@ -75,10 +79,10 @@ def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> No
 
 
 # defining the elements in the window
-textbox = tk.Text(window, height=1, width=30, state="disabled")
-btn1 = tk.Button(window, text="Select Data file(s)", command=lambda: open_file_dialog(textbox, filepaths_str))
-button1 = tk.Button(window, text="Display Graph(s)", command=lambda: display_graphs(filepaths_str, textbox))
-button3 = tk.Button(window, text="Close", command=window.destroy)
+textbox = ctk.CTkEntry(window, width=400, state="disabled")
+btn1 = ctk.CTkButton(window, text="Select Data file(s)", command=lambda: open_file_dialog(textbox, filepaths_str))
+button1 = ctk.CTkButton(window, text="Display Graph(s)", command=lambda: display_graphs(filepaths_str, textbox))
+button3 = ctk.CTkButton(window, text="Close", command=window.destroy)
 
 # display the label, textbox, and buttons on the window
 textbox.grid(row=0, column=0, columnspan=3)
