@@ -16,15 +16,16 @@ filepaths_str = tk.StringVar()
 def open_file_dialog(filenames_txtbox: tk.Text, filepaths_str: tk.StringVar) -> None:
     """open file picker and set the texts in text box"""
 
-    filepaths = filedialog.askopenfilenames(initialdir=".", title="Select files",
-                                            filetypes=[("Text files", "*.csv")], multiple=True)  # type: ignore
+    filepaths = filedialog.askopenfilenames(
+        initialdir=".", title="Select files", filetypes=[("Text files", "*.csv")], multiple=True  # type: ignore
+    )
 
     filepaths_str.set(",".join(filepaths))  # save the path of all selected data files.
     # format data file names to display in text box
     txtbox_str = ",".join(map(lambda x: x.split(os.sep)[-1], filepaths))
 
     filenames_txtbox.configure(state=tk.NORMAL)
-    filenames_txtbox.delete('1.0', tk.END)
+    filenames_txtbox.delete("1.0", tk.END)
     filenames_txtbox.insert(tk.END, txtbox_str)
     filenames_txtbox.configure(state=tk.DISABLED)
 
@@ -47,7 +48,7 @@ def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> No
     file_paths = filepaths_str.get().split(",")
     dataframes = [read_csv(filename, skiprows=1).dropna() for filename in file_paths]
     txtbox_str = filenames_txtbox.get("1.0", "end")
-    datafile_names = tuple(map(lambda x: x.split('.')[0], txtbox_str.strip().split(',')))
+    datafile_names = tuple(map(lambda x: x.split(".")[0], txtbox_str.strip().split(",")))
 
     # create a plot which displays all selected dataframes
     fig, ax = plt.subplots()
@@ -55,7 +56,7 @@ def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> No
     fig.set_tight_layout(True)
     lines = []
     for dataframe in dataframes:
-        lines.append(ax.plot(dataframe["cm-1"], dataframe["%T"], '-')[0])
+        lines.append(ax.plot(dataframe["cm-1"], dataframe["%T"], "-")[0])
     ax.set_xlabel("cm-1")
     ax.set_ylabel("%T")
     ax.grid()
@@ -68,8 +69,8 @@ def display_graphs(filepaths_str: tk.StringVar, filenames_txtbox: tk.Text) -> No
         legend.set_pickradius(5)
     graphs = dict(zip(legends.get_lines(), lines))
 
-    cursor = Cursor(ax, color='k', linewidth=1)
-    plt.connect('pick_event', lambda event: on_pick(event, graphs, fig))  # connect mouse click event
+    cursor = Cursor(ax, color="k", linewidth=1)  # noqa: F841
+    plt.connect("pick_event", lambda event: on_pick(event, graphs, fig))  # connect mouse click event
     plt.show()
 
 
