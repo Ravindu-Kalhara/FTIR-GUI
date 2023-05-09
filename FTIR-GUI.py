@@ -12,13 +12,12 @@ ctk.set_default_color_theme("blue")
 
 # Create the main window
 window = ctk.CTk()
-window.geometry("420x80")
 window.title("FTIR DATA PLOTER")
 filepaths_str = ctk.StringVar()
 
 
 def open_file_dialog(filenames_txtbox: ctk.CTkEntry, filepaths_str: ctk.StringVar) -> None:
-    """open file picker and set the texts in text box"""
+    """open file picker and set the texts in filenames entry box"""
 
     filepaths = filedialog.askopenfilenames(
         initialdir=".", title="Select files", filetypes=[("Text files", "*.csv")], multiple=True  # type: ignore
@@ -79,15 +78,41 @@ def display_graphs(filepaths_str: ctk.StringVar, filenames_txtbox: ctk.CTkEntry)
 
 
 # defining the elements in the window
-textbox = ctk.CTkEntry(window, width=400, state="disabled")
-btn1 = ctk.CTkButton(window, text="Select Data file(s)", command=lambda: open_file_dialog(textbox, filepaths_str))
-button1 = ctk.CTkButton(window, text="Display Graph(s)", command=lambda: display_graphs(filepaths_str, textbox))
-button3 = ctk.CTkButton(window, text="Close", command=window.destroy)
+frame_1 = ctk.CTkFrame(window)
+filenames = ctk.CTkEntry(frame_1, width=400, state="disabled")
+btn1 = ctk.CTkButton(frame_1, text="Select Data file(s)", command=lambda: open_file_dialog(filenames, filepaths_str))
+button1 = ctk.CTkButton(frame_1, text="Display Graph(s)", command=lambda: display_graphs(filepaths_str, filenames))
 
-# display the label, textbox, and buttons on the window
-textbox.grid(row=0, column=0, columnspan=3)
+frame_2 = ctk.CTkFrame(window)
+filemin_lbl = ctk.CTkLabel(frame_2, text="Select the data file which \n wants to find local minimum")
+filemin_txt = ctk.CTkEntry(frame_2, state=ctk.DISABLED)
+filemin_btn = ctk.CTkButton(frame_2, text="Select Data file")
+lower_bound_lbl = ctk.CTkLabel(frame_2, text="Enter the lower bound")
+lower_bound_txt = ctk.CTkEntry(frame_2)
+upper_bound_lbl = ctk.CTkLabel(frame_2, text="Enter the upper bound")
+upper_bound_txt = ctk.CTkEntry(frame_2)
+minimum_lbl = ctk.CTkLabel(frame_2, text="Minimum data point")
+minimum_txt = ctk.CTkEntry(frame_2, state=ctk.DISABLED)
+minimum_btn = ctk.CTkButton(frame_2, text="Find Minimum")
+button3 = ctk.CTkButton(frame_2, text="Close", command=window.destroy)
+
+# display the label, filenames, and buttons on the window
+frame_1.pack()
+filenames.grid(row=0, column=0, columnspan=3)
 btn1.grid(row=1, column=0)
 button1.grid(row=1, column=1)
-button3.grid(row=1, column=2)
+
+frame_2.pack()
+filemin_lbl.grid(row=0, column=0)
+filemin_txt.grid(row=0, column=1)
+filemin_btn.grid(row=0, column=2)
+lower_bound_lbl.grid(row=1, column=0)
+lower_bound_txt.grid(row=1, column=1)
+upper_bound_lbl.grid(row=2, column=0)
+upper_bound_txt.grid(row=2, column=1)
+minimum_lbl.grid(row=3, column=0)
+minimum_txt.grid(row=3, column=1)
+minimum_btn.grid(row=4, column=0)
+button3.grid(row=4, column=1)
 
 window.mainloop()
