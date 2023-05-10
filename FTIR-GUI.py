@@ -7,6 +7,7 @@ ctk.set_default_color_theme("blue")
 
 # Create the main window
 window = ctk.CTk()
+window.geometry("500x300")
 window.title("FTIR DATA PLOTER")
 
 # Add tabview to the main window and nameing
