@@ -5,6 +5,7 @@ from matplotlib.figure import Figure
 from matplotlib.widgets import Cursor
 from os import sep
 from customtkinter import filedialog
+from tkinter import messagebox
 from pandas import read_csv
 
 
@@ -72,30 +73,41 @@ class Graphs:
     def __display_graphs(self) -> None:
         """Displaying plots and other features activates after click on self.display_graphs_btn button."""
 
-        file_paths = self.filepaths_str.get().split(",")
-        dataframes = [read_csv(filename, skiprows=1).dropna() for filename in file_paths]
-        txtbox_str = self.filenames_entry.get()
-        datafile_names = tuple(map(lambda x: x.split(".")[0], txtbox_str.strip().split(",")))
+        try:
+            file_paths = self.filepaths_str.get().split(",")
+            dataframes = [read_csv(filename, skiprows=1).dropna() for filename in file_paths]
+            txtbox_str = self.filenames_entry.get()
+            datafile_names = tuple(map(lambda x: x.split(".")[0], txtbox_str.strip().split(",")))
 
-        # Create a plot which displays all selected dataframes
-        fig, ax = plt.subplots()
-        fig.set_size_inches(w=10, h=6)
-        fig.set_tight_layout(True)
-        lines = []
-        for dataframe in dataframes:
-            lines.append(ax.plot(dataframe["cm-1"], dataframe["%T"], "-")[0])
-        ax.set_xlabel("cm-1")
-        ax.set_ylabel("%T")
-        ax.grid()
-        ax.set_title(f"Transmition vs wave number of {', '.join(datafile_names)}")
+            # Create a plot which displays all selected dataframes
+            fig, ax = plt.subplots()
+            fig.set_size_inches(w=10, h=6)
+            fig.set_tight_layout(True)
+            lines = []
+            for dataframe in dataframes:
+                lines.append(ax.plot(dataframe["cm-1"], dataframe["%T"], "-")[0])
+            ax.set_xlabel("cm-1")
+            ax.set_ylabel("%T")
+            ax.grid()
+            ax.set_title(f"Transmition vs wave number of {', '.join(datafile_names)}")
 
-        # Config plot for show-hide feature
-        legends = ax.legend(datafile_names, loc="lower right")
-        for legend in legends.get_lines():
-            legend.set_picker(True)
-            legend.set_pickradius(5)
-        graphs = dict(zip(legends.get_lines(), lines))
+            # Config plot for show-hide feature
+            legends = ax.legend(datafile_names, loc="lower right")
+            for legend in legends.get_lines():
+                legend.set_picker(True)
+                legend.set_pickradius(5)
+            graphs = dict(zip(legends.get_lines(), lines))
 
-        cursor = Cursor(ax, color="k", linewidth=1)  # noqa: F841
-        plt.connect("pick_event", lambda event: self.__on_pick(event, graphs, fig))  # connect mouse click event
-        plt.show()
+            cursor = Cursor(ax, color="k", linewidth=1)  # noqa: F841
+            plt.connect("pick_event", lambda event: self.__on_pick(event, graphs, fig))  # connect mouse click event
+            plt.show()
+        except FileNotFoundError as fnf:
+            print(fnf)
+            messagebox.showwarning("Warning", "Please select at least one valid FTIR data file.")
+        except KeyError as ke:
+            print(ke)
+            plt.close()
+            messagebox.showwarning("Warning", "Please check whether is the selected file valid FTIR data file.")
+        except Exception as exc:
+            print(exc)
+            messagebox.showerror("Warning", "Something went wrong. Try again.")
