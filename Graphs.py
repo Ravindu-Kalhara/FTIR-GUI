@@ -51,8 +51,8 @@ class Graphs:
         self.filenames_entry.configure(state=ctk.DISABLED)
 
     def __on_pick(self, event: PickEvent, graphs: dict, fig: Figure) -> None:
-        """Fucntion which triggers when mouse button is pressed on a legend of a graph. When mouse button is pressed 
-        on a legend, the graph related to that legend become hidden one. If again click one that same legend then that 
+        """Fucntion which triggers when mouse button is pressed on a legend of a graph. When mouse button is pressed
+        on a legend, the graph related to that legend become hidden one. If again click one that same legend then that
         graph is visible again. This feature is simply called as "show-hide".
 
         :param event: parameter to store the mouse button press event
