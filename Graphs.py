@@ -38,7 +38,7 @@ class Graphs:
         """Open file picker and set the texts in filenames entry box"""
 
         filepaths = filedialog.askopenfilenames(
-            initialdir=".", title="Select files", filetypes=[("Text files", "*.csv")], multiple=True  # type: ignore
+            initialdir=".", title="Select files", filetypes=[("Text files", "*.csv")]
         )
 
         self.filepaths_str.set(",".join(filepaths))  # save the path of all selected data files.
