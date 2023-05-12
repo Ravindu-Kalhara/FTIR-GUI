@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from customtkinter import filedialog
+from tkinter import messagebox
 from os import sep
 from pandas import read_csv
 
@@ -41,22 +42,36 @@ class Analysis:
         self.minimum_btn.grid(row=4, column=0)
 
     def __get_minimum(self) -> None:
-        """Disply the wave numbers which has lowest relative transmistion in the given wave number range in 
+        """Disply the wave numbers which has lowest relative transmistion in the given wave number range in
         self.minimum_entry entry box."""
+        try:
+            # Find the minimum(s)
+            df = read_csv(self.filepath_str.get(), skiprows=1).dropna()
+            lower_bound = float(self.lower_bound_entry.get().strip())
+            upper_bound = float(self.upper_bound_entry.get().strip())
+            selected_range = df.loc[(df["cm-1"] >= lower_bound) & (df["cm-1"] <= upper_bound)]
+            mins = selected_range[selected_range["%T"] == selected_range["%T"].min()]["cm-1"]
+            mins_str = ",".join(map(str, mins))
 
-        # Find the minimum(s)
-        lower_bound = float(self.lower_bound_entry.get().strip())
-        upper_bound = float(self.upper_bound_entry.get().strip())
-        df = read_csv(self.filepath_str.get(), skiprows=1).dropna()
-        selected_range = df.loc[(df["cm-1"] >= lower_bound) & (df["cm-1"] <= upper_bound)]
-        mins = selected_range[selected_range["%T"] == selected_range["%T"].min()]["cm-1"]
-        mins_str = ",".join(map(str, mins))
-
-        # Display the minimum(s) in self.minimum_entry entry box
-        self.minimum_entry.configure(state=ctk.NORMAL)
-        self.minimum_entry.delete(0, ctk.END)
-        self.minimum_entry.insert(ctk.END, mins_str)
-        self.minimum_entry.configure(state=ctk.DISABLED)
+            # Display the minimum(s) in self.minimum_entry entry box
+            self.minimum_entry.configure(state=ctk.NORMAL)
+            self.minimum_entry.delete(0, ctk.END)
+            self.minimum_entry.insert(ctk.END, mins_str)
+            self.minimum_entry.configure(state=ctk.DISABLED)
+        except FileNotFoundError as fnf:
+            print(fnf)
+            messagebox.showwarning("Warning", "Please select a valid FTIR data file.")
+        except ValueError as ve:
+            print(ve)
+            messagebox.showwarning(
+                "Warning", "Please check whether is lower and upper bound entry boxes are filled with valid entries."
+            )
+        except KeyError as ke:
+            print(ke)
+            messagebox.showwarning("Warning", "Please check whether is the selected file valid FTIR data file.")
+        except Exception as exc:
+            print(exc)
+            messagebox.showerror("Warning", "Something went wrong. Try again.")
 
     def __open_file_dialog(self) -> None:
         """Open file picker and set the texts in filenames entry box"""
