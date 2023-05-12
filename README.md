@@ -8,5 +8,5 @@ In this project, tk framework based simple GUI tool is developed to display FTIR
 - [X] Add support for modern UI look and feel.
 - [X] OOP implementation.
 - [X] Add a feature to identify the minimum point if data range is given.
-- [ ] Error Handling
+- [X] Error Handling
 - [ ] Make more polished UI.
