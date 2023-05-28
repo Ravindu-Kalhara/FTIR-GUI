@@ -31,7 +31,7 @@ class Graphs:
             command=self.__display_graphs,
         )
 
-        self.filenames_entry.grid(row=0, column=0, columnspan=3)
+        self.filenames_entry.grid(row=0, column=0, columnspan=2)
         self.filesselect_btn.grid(row=1, column=0)
         self.display_graphs_btn.grid(row=1, column=1)
 

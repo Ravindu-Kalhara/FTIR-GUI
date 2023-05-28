@@ -7,7 +7,7 @@ ctk.set_default_color_theme("blue")
 
 # Create the main window
 window = ctk.CTk()
-window.geometry("500x300")
+window.geometry("550x275")
 window.title("FTIR DATA PLOTER")
 
 # Add tabview to the main window and nameing
@@ -19,5 +19,29 @@ tab_2 = tab_view.add("Analysis")
 graphs = Graphs(tab_1)
 analysis = Analysis(tab_2)
 
+# UI configurations
+fontconfig = ctk.CTkFont(size=13)
+
+for widget in tab_1.winfo_children():
+    widget_type = type(widget)
+    if widget_type == ctk.CTkEntry:
+        widget.grid_configure(pady=5)
+    widget.configure(font=fontconfig)
+
+for widget in tab_2.winfo_children():
+    widget_type = type(widget)
+    if widget_type == ctk.CTkLabel:
+        widget.grid_configure(sticky=ctk.W, padx=15)
+        widget.configure(font=fontconfig)
+    if widget_type == ctk.CTkEntry:
+        widget.grid_configure(padx=10, pady=3)
+        widget.configure(font=fontconfig, width=300)
+    if widget_type == ctk.CTkButton:
+        if widget.winfo_name() == "!ctkbutton2":
+            widget.grid_configure(sticky=ctk.E, padx=10)
+        print(widget.winfo_name())
+        widget.grid_configure(pady=3)
+
+tab_view.pack()
 tab_view.pack()
 window.mainloop()

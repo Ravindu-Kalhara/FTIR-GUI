@@ -19,7 +19,7 @@ class Analysis:
 
         # Define all UI elements used in Analysis class. They are defined explicitly because with that, UI customization
         # become much eassy.
-        self.filemin_lbl = ctk.CTkLabel(self.master, text="Select the data file which \n wants to find local minimum")
+        self.filemin_lbl = ctk.CTkLabel(self.master, text="Selected the data file")
         self.filemin_entry = ctk.CTkEntry(self.master, state=ctk.DISABLED)
         self.filemin_btn = ctk.CTkButton(self.master, text="Select Data file", command=self.__open_file_dialog)
         self.lower_bound_lbl = ctk.CTkLabel(self.master, text="Enter the lower bound")
@@ -32,14 +32,14 @@ class Analysis:
 
         self.filemin_lbl.grid(row=0, column=0)
         self.filemin_entry.grid(row=0, column=1)
-        self.filemin_btn.grid(row=0, column=2)
         self.lower_bound_lbl.grid(row=1, column=0)
         self.lower_bound_entry.grid(row=1, column=1)
         self.upper_bound_lbl.grid(row=2, column=0)
         self.upper_bound_entry.grid(row=2, column=1)
         self.minimum_lbl.grid(row=3, column=0)
         self.minimum_entry.grid(row=3, column=1)
-        self.minimum_btn.grid(row=4, column=0)
+        self.filemin_btn.grid(row=4, column=0)
+        self.minimum_btn.grid(row=4, column=1)
 
     def __get_minimum(self) -> None:
         """Disply the wave numbers which has lowest relative transmistion in the given wave number range in
