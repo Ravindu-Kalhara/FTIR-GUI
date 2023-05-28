@@ -32,15 +32,14 @@ for widget in tab_2.winfo_children():
     widget_type = type(widget)
     if widget_type == ctk.CTkLabel:
         widget.grid_configure(sticky=ctk.W, padx=15)
-        widget.configure(font=fontconfig)
     if widget_type == ctk.CTkEntry:
         widget.grid_configure(padx=10, pady=3)
-        widget.configure(font=fontconfig, width=300)
+        widget.configure(width=300)
     if widget_type == ctk.CTkButton:
         if widget.winfo_name() == "!ctkbutton2":
             widget.grid_configure(sticky=ctk.E, padx=10)
-        print(widget.winfo_name())
         widget.grid_configure(pady=3)
+    widget.configure(font=fontconfig)
 
 tab_view.pack()
 tab_view.pack()
